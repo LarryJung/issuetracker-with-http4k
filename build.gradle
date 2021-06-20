@@ -1,0 +1,50 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${kotlinVersion}"
+    }
+}
+
+apply plugin: 'application'
+
+mainClassName = "com.larry.issuetracker.IssueTrackerKt"
+
+repositories {
+    mavenCentral()
+}
+
+apply plugin: 'kotlin'
+
+compileKotlin.kotlinOptions.jvmTarget = "11"
+compileTestKotlin.kotlinOptions.jvmTarget = "11"
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    // jdk 11 쓰면서 생기는 dependencies
+    implementation "javax.xml.bind:jaxb-api:2.3.1"
+    implementation "com.sun.xml.bind:jaxb-impl:2.3.1"
+    implementation "com.sun.xml.bind:jaxb-core:2.3.0.1"
+
+    implementation "io.jsonwebtoken:jjwt:0.9.1"
+    implementation "org.http4k:http4k-client-apache:${http4kVersion}"
+    implementation "org.http4k:http4k-core:${http4kVersion}"
+    implementation "org.http4k:http4k-format-jackson:${http4kVersion}"
+    implementation "org.http4k:http4k-security-oauth:${http4kVersion}"
+    implementation "org.http4k:http4k-template-thymeleaf:${http4kVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-script-runtime:${kotlinVersion}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+    testImplementation "org.junit.jupiter:junit-jupiter-engine:${junitVersion}"
+}
