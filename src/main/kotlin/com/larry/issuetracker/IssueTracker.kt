@@ -103,28 +103,3 @@ fun startApp(config: AppConfig): Http4kServer {
     println("Server started on " + server.port())
     return server
 }
-
-/*
-TODO
-1. 로그인, 인증 보완
-  - [O] 쿠키로 로그인 여부를 컨텍스트에서 가져올 수 있다.
-  - [O] path 별로 인증필터를 추가한다.
-  - [ ] github api 연동한다.
-  - [ ] 쿠키가 만료되면 재발행한다. (refresh token 구현)
-
-2. 테이블 설계
-  - user, issue, label, milestone, assignee, comment
-
-3. Api 설계
-  - issue 생성
-  - issue detail 조회
-  - issue update api
-  - issue 목록 조회 with 검색필터
-  - 페이징 추가
-  - comment api
-
-4. api 데이터 기반 화면 개발
-
-5. util 설계
-  - request에서 path나 param 빼오는 부분을 wrapping 해보기
- */
