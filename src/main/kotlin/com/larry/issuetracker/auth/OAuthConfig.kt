@@ -1,15 +1,10 @@
-package com.larry.issuetracker.config.auth
+package com.larry.issuetracker.auth
 
 import com.larry.issuetracker.clients.GithubClient
-import com.larry.issuetracker.config.global.Global
-import com.larry.issuetracker.domain.Email
-import com.larry.issuetracker.domain.User
-import com.larry.issuetracker.domain.UserRepository
-import com.larry.issuetracker.domain.Username
+import com.larry.issuetracker.domain.*
+import com.larry.issuetracker.global.Global
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.*
-import org.http4k.core.cookie.cookie
-import org.http4k.security.AccessToken
 import org.http4k.security.InsecureCookieBasedOAuthPersistence
 import org.http4k.security.OAuthProvider
 import org.http4k.security.gitHub
@@ -33,19 +28,20 @@ class IssueJwtFilter(
     private val githubClient: GithubClient,
     private val jwt: JWT
 ) : Filter {
-    override fun invoke(next: HttpHandler): HttpHandler = oauthProvider.authFilter.then {
-        val authToken = oAuthPersistence.retrieveToken(it) ?: throw RuntimeException("no access token")
-        val githubUser = githubClient.getUserInfo(authToken)
-        val jwtToken = jwt.generate(Username(githubUser.username), Email(githubUser.email))
-        if (userRepository.getUserByEmail(Email(githubUser.email)) == null) {
+    override fun invoke(next: HttpHandler): HttpHandler = oauthProvider.authFilter.then { request ->
+        val authToken = oAuthPersistence.retrieveToken(request) ?: throw RuntimeException("no access token")
+        val githubUser = githubClient.getUserInfo(Token(authToken.value))
+        val jwtToken = jwt.generate(githubUser.name, mapOf("username" to githubUser.name, "email" to (githubUser.email ?: "")))
+        if (userRepository.getUserByName(Username(githubUser.name)) == null) {
             userRepository.insert(
                 User(
-                    email = Email(githubUser.email),
+                    email = githubUser.email?.let { Email(it) } ?: Email(""),
                     token = jwtToken,
-                    username = Username(githubUser.username)
+                    username = Username(githubUser.name),
+                    image = Image(githubUser.avatarUrl)
                 )
             )
         }
-        next(it.with(Global.Keys.jwtToken of jwtToken))
+        next(request.with(Global.Keys.jwtToken of jwtToken))
     }
 }

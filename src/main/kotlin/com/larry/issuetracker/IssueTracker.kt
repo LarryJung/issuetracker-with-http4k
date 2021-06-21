@@ -1,15 +1,14 @@
 package com.larry.issuetracker
 
+import com.larry.issuetracker.auth.EntryChecker
+import com.larry.issuetracker.auth.IssueJwtFilter
+import com.larry.issuetracker.auth.JWT
+import com.larry.issuetracker.auth.oauthProvider
 import com.larry.issuetracker.clients.GithubClient
-import com.larry.issuetracker.config.AppConfig
-import com.larry.issuetracker.config.auth.*
-import com.larry.issuetracker.config.global.Global
-import com.larry.issuetracker.config.local
 import com.larry.issuetracker.config.view.view
 import com.larry.issuetracker.domain.InMemoryUserRepository
 import com.larry.issuetracker.domain.UserRepository
-import com.larry.issuetracker.handlers.api.LabelDto
-import com.larry.issuetracker.handlers.api.okWith
+import com.larry.issuetracker.global.*
 import com.larry.issuetracker.view.Index
 import org.http4k.core.*
 import org.http4k.core.Method.GET
@@ -44,7 +43,7 @@ fun makeRoutesWithDependencies(
             },
             "/me" bind GET to EntryChecker(jwt)(true).then {
                 val authUser = Global.Keys.authUser(it)
-                okWith(authUser)
+                okWith(userRepository.getUserByName(authUser!!.username))
             },
             "/label/{labelId}" bind GET to {
                 okWith(LabelDto(it.path("labelId")!!, it.query("color")!!))

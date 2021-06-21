@@ -1,6 +1,6 @@
-package com.larry.issuetracker.config.global
+package com.larry.issuetracker.global
 
-import com.larry.issuetracker.config.auth.AuthUser
+import com.larry.issuetracker.auth.AuthUser
 import com.larry.issuetracker.domain.Token
 import org.http4k.core.RequestContexts
 import org.http4k.lens.RequestContextKey

@@ -1,4 +1,4 @@
-package com.larry.issuetracker.config.auth
+package com.larry.issuetracker.auth
 
 import com.larry.issuetracker.domain.Email
 import com.larry.issuetracker.domain.Token
@@ -23,17 +23,12 @@ class JWT(
         algorithm ?: SignatureAlgorithm.HS256.jcaName
     )
 
-    fun generate(username: Username, email: Email) =
+    fun generate(subject: String, claims: Map<String, String>) =
         Token(
             Jwts.builder()
-                .setSubject(username.value)
+                .setSubject(subject)
                 .setIssuer(issuer)
-                .setClaims(
-                    mapOf(
-                        "username" to username.value,
-                        "email" to email.value
-                    )
-                )
+                .setClaims(claims)
                 .setExpiration(Date(System.currentTimeMillis() + expirationMillis))
                 .signWith(SignatureAlgorithm.HS256, signingKey)
                 .compact()

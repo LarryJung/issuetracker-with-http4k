@@ -1,6 +1,6 @@
-package com.larry.issuetracker.config.auth
+package com.larry.issuetracker.auth
 
-import com.larry.issuetracker.config.global.Global
+import com.larry.issuetracker.global.Global
 import com.larry.issuetracker.domain.*
 import org.http4k.core.Filter
 import org.http4k.core.cookie.cookie

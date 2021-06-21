@@ -1,10 +1,10 @@
-package com.larry.issuetracker.handlers.api
+package com.larry.issuetracker.global
 
 import org.http4k.core.Body
 import org.http4k.core.Response
 import org.http4k.core.Status
 import org.http4k.core.with
-import org.http4k.format.Jackson.auto
+import com.larry.issuetracker.global.MyJackson.auto
 
 // marker interface
 interface ResDto

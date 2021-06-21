@@ -1,6 +1,6 @@
 package com.larry.issuetracker.view
 
-import com.larry.issuetracker.config.auth.AuthUser
+import com.larry.issuetracker.auth.AuthUser
 import org.http4k.template.ViewModel
 
 data class Index(
