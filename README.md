@@ -13,11 +13,12 @@ https://www.http4k.org/
 1. 로그인, 인증 보완
 - [X] 쿠키로 로그인 여부를 컨텍스트에서 가져올 수 있다.
 - [X] path 별로 인증필터를 추가한다.
-- [ ] github api 연동한다.
+- [X] github api 연동한다.
 - [ ] 쿠키가 만료되면 재발행한다. (refresh token 구현)
 
 2. 테이블 설계
-- user, issue, label, milestone, assignee, comment
+- [X] user, issue, label, assignee, comment
+- [X] h2 연동 테스트
 
 3. Api 설계
 - issue 생성
