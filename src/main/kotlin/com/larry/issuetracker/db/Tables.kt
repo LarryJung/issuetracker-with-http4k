@@ -12,6 +12,8 @@ fun createDb(url: String, driver: String): Database {
         SchemaUtils.create(Users)
         SchemaUtils.create(Issues)
         SchemaUtils.create(Assignments)
+        SchemaUtils.create(Labels)
+        SchemaUtils.create(LabelsIssues)
         SchemaUtils.create(Comments)
     }
     return database
@@ -19,7 +21,7 @@ fun createDb(url: String, driver: String): Database {
 
 object Users : IntIdTable("users") {
     val username = varchar("name", 50).index()
-    val email = varchar("email", 255).uniqueIndex().nullable()
+    val email = varchar("email", 255).nullable()
     val image = varchar("image", 255).nullable()
 }
 
@@ -33,10 +35,15 @@ object Issues : IntIdTable("issues") {
 object Assignments : IntIdTable("assignments") {
     val assigneeId = reference("assignee_id", Users, ReferenceOption.CASCADE).index()
     val issueId = reference("issue_id", Issues, ReferenceOption.CASCADE).index()
+}
 
-    init {
-        uniqueIndex("idx_assignee_id_issue_id", assigneeId, issueId)
-    }
+object LabelsIssues: IntIdTable("labels_issues") {
+    val labelId = reference("label_id", Labels, ReferenceOption.CASCADE).index()
+    val issueId = reference("issue_id", Issues, ReferenceOption.CASCADE).index()
+}
+
+object Labels : IntIdTable("labels") {
+    val name = varchar("name", 20)
 }
 
 object Comments : IntIdTable("comments") {

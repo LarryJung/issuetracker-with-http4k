@@ -1,6 +1,7 @@
 package com.larry.issuetracker.auth
 
 import com.larry.issuetracker.clients.GithubClient
+import com.larry.issuetracker.db.CommonTxManager
 import com.larry.issuetracker.domain.*
 import com.larry.issuetracker.global.Global
 import org.http4k.client.JavaHttpClient
@@ -24,23 +25,24 @@ val oauthProvider = OAuthProvider.gitHub(
 )
 
 class IssueJwtFilter(
-    private val userRepository: UserRepository,
+    private val txManager: CommonTxManager,
     private val githubClient: GithubClient,
     private val jwt: JWT
 ) : Filter {
     override fun invoke(next: HttpHandler): HttpHandler = oauthProvider.authFilter.then { request ->
         val authToken = oAuthPersistence.retrieveToken(request) ?: throw RuntimeException("no access token")
         val githubUser = githubClient.getUserInfo(Token(authToken.value))
-        val jwtToken = jwt.generate(githubUser.name, mapOf("username" to githubUser.name, "email" to (githubUser.email ?: "")))
-        if (userRepository.getUserByName(Username(githubUser.name)) == null) {
-            userRepository.insert(
-                User(
+        val jwtToken =
+            jwt.generate(githubUser.name, mapOf("username" to githubUser.name, "email" to (githubUser.email ?: "")))
+
+        if (txManager.tx { getUser(Username(githubUser.name)) } == null) {
+            txManager.tx {
+                insertUser(User(
                     email = githubUser.email?.let { Email(it) } ?: Email(""),
-                    token = jwtToken,
                     username = Username(githubUser.name),
                     image = Image(githubUser.avatarUrl)
-                )
-            )
+                ))
+            }
         }
         next(request.with(Global.Keys.jwtToken of jwtToken))
     }
